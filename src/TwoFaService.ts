@@ -76,7 +76,10 @@ export class TwoFaService extends LoggerWrapper {
         }
 
         let provider = this.getProvider(twoFa.type);
-        await provider.validate(token, twoFa.details);
+        let result = await provider.validate(token, twoFa.details);
+        if (!result.isValid) {
+            throw new ExtendedError(`Unable to verify 2FA: token is invalid`, ExtendedError.HTTP_CODE_FORBIDDEN);
+        }
     }
 
     public async reset(ownerUid: TwoFaOwnerUid, type: string): Promise<TwoFaEntity> {
