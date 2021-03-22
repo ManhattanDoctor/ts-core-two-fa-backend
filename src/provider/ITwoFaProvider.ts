@@ -7,6 +7,7 @@ export interface ITwoFaProvider<T = any> {
     readonly type: string;
 }
 
+
 export interface ITwoFaValidateDetails {
     isValid: boolean;
 }

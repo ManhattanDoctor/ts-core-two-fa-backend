@@ -1,6 +1,6 @@
 {
     "name": "@ts-core/two-fa-backend",
-    "version": "1.0.11",
+    "version": "1.0.0",
     "description": "Classes and utils for backend 2FA",
     "main": "index.js",
     "scripts": {},
