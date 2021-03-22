@@ -61,7 +61,7 @@ export class TwoFaService extends LoggerWrapper {
         }
 
         let provider = this.getProvider(twoFa.type);
-        await provider.validate(token, twoFa);
+        await provider.validate(token, twoFa.details);
 
         twoFa.isTemporary = false;
         return this.database.save(twoFa);
