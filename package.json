@@ -9,7 +9,7 @@
         "email": "renat.gubaev@gmail.com"
     },
     "license": "ISC",
-    "peerDependencies": {
+    "dependencies": {
         "@ts-core/backend": "^1.0.38",
         "@ts-core/common": "^1.0.161",
         "@ts-core/two-fa": "^1.0.2"
