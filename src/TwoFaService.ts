@@ -93,12 +93,13 @@ export class TwoFaService extends LoggerWrapper {
         return twoFa.resetUid;
     }
 
-    public async resetFinish(resetUid: string): Promise<void> {
+    public async resetFinish(resetUid: string): Promise<string> {
         let twoFa = await this.database.twoFa.findOne({ resetUid });
         if (_.isNil(twoFa)) {
             throw new ExtendedError(`Unable to finish reset: 2FA is nil`);
         }
         await this.database.remove(twoFa.id);
+        return twoFa.type;
     }
 
     public getProvider(type: string): ITwoFaProvider {
