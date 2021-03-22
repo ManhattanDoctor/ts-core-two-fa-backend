@@ -61,8 +61,10 @@ export class TwoFaService extends LoggerWrapper {
         }
 
         let provider = this.getProvider(twoFa.type);
-        await provider.validate(token, twoFa.details);
-
+        let result = await provider.validate(token, twoFa.details);
+        if (!result.isValid) {
+            throw new ExtendedError(`Unable to save 2FA: token is invalid`, ExtendedError.HTTP_CODE_FORBIDDEN);
+        }
         twoFa.isTemporary = false;
         return this.database.save(twoFa);
     }
