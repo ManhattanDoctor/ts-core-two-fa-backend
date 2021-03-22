@@ -47,6 +47,11 @@ export class TwoFaEntity implements ITwoFa {
     @IsDefined()
     public details: any;
 
+    @Column({ name: 'reset_uid', nullable: true })
+    @IsOptional()
+    @IsString()
+    public resetUid: string;
+
     @Column({ name: 'is_temporary' })
     @IsBoolean()
     public isTemporary: boolean;
@@ -77,5 +82,9 @@ export class TwoFaEntity implements ITwoFa {
 
     public get isEnabled(): boolean {
         return !this.isTemporary && !_.isNil(this.details);
+    }
+
+    public get isResetting(): boolean {
+        return !_.isNil(this.resetUid);
     }
 }

@@ -6,6 +6,7 @@ import { TwoFaDatabaseService } from './TwoFaDatabaseService';
 import { ExtendedError } from '@ts-core/common/error';
 import { TwoFaEntity } from './database';
 import { TwoFaOwnerUid } from '@ts-core/two-fa';
+import { RandomUtil } from '@ts-core/common/util';
 
 export class TwoFaService extends LoggerWrapper {
     // --------------------------------------------------------------------------
@@ -54,16 +55,16 @@ export class TwoFaService extends LoggerWrapper {
     public async save(ownerUid: TwoFaOwnerUid, type: string, token: string): Promise<TwoFaEntity> {
         let twoFa = await this.database.get(ownerUid, type);
         if (_.isNil(twoFa)) {
-            throw new ExtendedError(`Unable to verify 2FA: 2FA is nil`, ExtendedError.HTTP_CODE_FORBIDDEN);
+            throw new ExtendedError(`Unable to verify: 2FA is nil`, ExtendedError.HTTP_CODE_FORBIDDEN);
         }
         if (twoFa.isEnabled) {
-            throw new ExtendedError(`Unable to save 2FA: it's already enabled, need to reset first`, ExtendedError.HTTP_CODE_FORBIDDEN);
+            throw new ExtendedError(`Unable to save: it's already enabled, need to reset first`, ExtendedError.HTTP_CODE_FORBIDDEN);
         }
 
         let provider = this.getProvider(twoFa.type);
         let result = await provider.validate(token, twoFa.details);
         if (!result.isValid) {
-            throw new ExtendedError(`Unable to save 2FA: token is invalid`, ExtendedError.HTTP_CODE_FORBIDDEN);
+            throw new ExtendedError(`Unable to save: token is invalid`, ExtendedError.HTTP_CODE_FORBIDDEN);
         }
         twoFa.isTemporary = false;
         return this.database.save(twoFa);
@@ -72,24 +73,32 @@ export class TwoFaService extends LoggerWrapper {
     public async validate(ownerUid: TwoFaOwnerUid, type: string, token: string): Promise<void> {
         let twoFa = await this.database.get(ownerUid, type);
         if (_.isNil(twoFa)) {
-            throw new ExtendedError(`Unable to verify 2FA: 2FA is nil`, ExtendedError.HTTP_CODE_FORBIDDEN);
+            throw new ExtendedError(`Unable to verify: 2FA is nil`, ExtendedError.HTTP_CODE_FORBIDDEN);
         }
 
         let provider = this.getProvider(twoFa.type);
         let result = await provider.validate(token, twoFa.details);
         if (!result.isValid) {
-            throw new ExtendedError(`Unable to verify 2FA: token is invalid`, ExtendedError.HTTP_CODE_FORBIDDEN);
+            throw new ExtendedError(`Unable to verify: token is invalid`, ExtendedError.HTTP_CODE_FORBIDDEN);
         }
     }
 
-    public async reset(ownerUid: TwoFaOwnerUid, type: string): Promise<TwoFaEntity> {
+    public async resetStart(ownerUid: TwoFaOwnerUid, type: string): Promise<string> {
         let twoFa = await this.database.get(ownerUid, type);
         if (_.isNil(twoFa)) {
-            throw new ExtendedError(`Unable to reset 2FA: 2FA is nil`);
+            throw new ExtendedError(`Unable to start reset: 2FA is nil`, ExtendedError.HTTP_CODE_FORBIDDEN);
         }
-        twoFa.details = null;
-        twoFa.isTemporary = true;
-        return this.database.save(twoFa);
+        twoFa.resetUid = RandomUtil.randomString(40);
+        await this.database.save(twoFa);
+        return twoFa.resetUid;
+    }
+
+    public async resetFinish(resetUid: string): Promise<void> {
+        let twoFa = await this.database.twoFa.findOne({ resetUid });
+        if (_.isNil(twoFa)) {
+            throw new ExtendedError(`Unable to finish reset: 2FA is nil`);
+        }
+        await this.database.remove(twoFa.id);
     }
 
     public getProvider(type: string): ITwoFaProvider {
