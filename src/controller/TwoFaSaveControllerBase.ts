@@ -1,5 +1,5 @@
 import { DefaultController } from '@ts-core/backend/controller';
-import { Logger } from '@ts-core/common/logger';
+import { ILogger } from '@ts-core/common/logger';
 import * as _ from 'lodash';
 import { ITwoFaSaveDto, ITwoFaSaveDtoResponse } from '@ts-core/two-fa/dto';
 import { TwoFaService } from '../TwoFaService';
@@ -11,7 +11,7 @@ export class TwoFaSaveControllerBase extends DefaultController<ITwoFaSaveDto, IT
     //
     // --------------------------------------------------------------------------
 
-    constructor(logger: Logger, private service: TwoFaService) {
+    constructor(logger: ILogger, protected service: TwoFaService) {
         super(logger);
     }
 

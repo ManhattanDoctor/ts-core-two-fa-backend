@@ -1,6 +1,6 @@
 import { DefaultController } from '@ts-core/backend/controller';
 import { ExtendedError } from '@ts-core/common/error';
-import { Logger } from '@ts-core/common/logger';
+import { ILogger } from '@ts-core/common/logger';
 import * as _ from 'lodash';
 import { TwoFaDatabaseService } from '../TwoFaDatabaseService';
 
@@ -11,7 +11,7 @@ export class TwoFaRemoveControllerBase extends DefaultController<number, void> {
     //
     // --------------------------------------------------------------------------
 
-    constructor(logger: Logger, private database: TwoFaDatabaseService) {
+    constructor(logger: ILogger, protected database: TwoFaDatabaseService) {
         super(logger);
     }
 

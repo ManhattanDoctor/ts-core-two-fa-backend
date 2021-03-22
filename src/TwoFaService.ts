@@ -25,7 +25,7 @@ export class TwoFaService extends LoggerWrapper {
     constructor(logger: ILogger, protected database: TwoFaDatabaseService, providers?: Array<ITwoFaProvider>) {
         super(logger);
         this._providers = new MapCollection('type');
-        if (_.isEmpty(providers)) {
+        if (!_.isEmpty(providers)) {
             this.providers.addItems(providers);
         }
     }

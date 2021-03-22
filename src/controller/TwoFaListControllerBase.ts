@@ -1,5 +1,5 @@
 import { DefaultController } from '@ts-core/backend/controller';
-import { Logger } from '@ts-core/common/logger';
+import { ILogger } from '@ts-core/common/logger';
 import { TypeormUtil } from '@ts-core/backend/database/typeorm';
 import { TwoFaDatabaseService } from '../TwoFaDatabaseService';
 import { ITwoFaListDto, ITwoFaListDtoResponse } from '@ts-core/two-fa/dto';
@@ -13,7 +13,7 @@ export class TwoFaListControllerBase extends DefaultController<ITwoFaListDto, IT
     //
     // --------------------------------------------------------------------------
 
-    constructor(logger: Logger, protected database: TwoFaDatabaseService) {
+    constructor(logger: ILogger, protected database: TwoFaDatabaseService) {
         super(logger);
     }
 
