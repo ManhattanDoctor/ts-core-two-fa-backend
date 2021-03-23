@@ -5,7 +5,7 @@ import { ITwoFaProvider } from './provider/ITwoFaProvider';
 import { TwoFaDatabaseService } from './TwoFaDatabaseService';
 import { ExtendedError } from '@ts-core/common/error';
 import { TwoFaEntity } from './database';
-import { TwoFaOwnerUid } from '@ts-core/two-fa';
+import { ITwoFa, TwoFaOwnerUid } from '@ts-core/two-fa';
 import { RandomUtil } from '@ts-core/common/util';
 
 export class TwoFaService extends LoggerWrapper {
@@ -93,13 +93,13 @@ export class TwoFaService extends LoggerWrapper {
         return twoFa.resetUid;
     }
 
-    public async resetFinish(resetUid: string): Promise<string> {
+    public async resetFinish(resetUid: string): Promise<ITwoFa> {
         let twoFa = await this.database.twoFa.findOne({ resetUid });
         if (_.isNil(twoFa)) {
             throw new ExtendedError(`Unable to finish reset: 2FA is nil`);
         }
         await this.database.remove(twoFa.id);
-        return twoFa.type;
+        return twoFa.toObject();
     }
 
     public getProvider(type: string): ITwoFaProvider {
