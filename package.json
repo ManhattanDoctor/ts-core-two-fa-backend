@@ -12,7 +12,7 @@
     "dependencies": {
         "@ts-core/backend": "^1.0.38",
         "@ts-core/common": "^1.0.161",
-        "@ts-core/two-fa": "^1.0.5"
+        "@ts-core/two-fa": "^1.0.7"
     },
     "devDependencies": {
         "gulp-npm-publisher": "1.0.2"
